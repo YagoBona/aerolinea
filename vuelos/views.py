@@ -4,11 +4,9 @@ from django.utils import timezone
 import uuid
 from vuelos.forms import FormularioRegistro
 from django.contrib.auth import login
-from .models import Usuario
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login
 from .models import Usuario, Pasajero, Boleto
-
+from django.views.decorators.http import require_POST
 
 def lista_vuelos(request):
     vuelos = Vuelo.objects.select_related('avion').all()
@@ -67,11 +65,12 @@ def registro_usuario(request):
         form = FormularioRegistro(request.POST)
         if form.is_valid():
             user = form.save()
+            dni = form.cleaned_data['dni']  # <- obtenemos el dato
 
             Pasajero.objects.create(
                 usuario=user,
                 nombre=user.username,
-                documento=user.username,
+                documento=dni,  # <- lo usamos
                 email=user.email,
                 telefono='0000',
                 fecha_nacimiento='2000-01-01',
@@ -85,11 +84,13 @@ def registro_usuario(request):
 
     return render(request, 'vuelos/registro.html', {'form': form})
 
+
 @login_required
 def mis_reservas(request):
-    pasajero = Pasajero.objects.filter(documento=request.user.username).first()
+    pasajero = Pasajero.objects.filter(usuario=request.user).first()
     reservas = Reserva.objects.filter(pasajero=pasajero).select_related('vuelo', 'asiento') if pasajero else []
     return render(request, 'vuelos/mis_reservas.html', {'reservas': reservas})
+
 
 @login_required
 def ver_boleto(request, codigo_reserva):
@@ -117,3 +118,17 @@ def imprimir_boleto(request, codigo_reserva):
         'boleto': boleto
     })
 
+
+@require_POST
+@login_required
+def cancelar_reserva(request, reserva_id):
+    reserva = get_object_or_404(Reserva, id=reserva_id, pasajero__usuario=request.user)
+
+    if reserva.estado != 'cancelada':
+        reserva.estado = 'cancelada'
+        reserva.save()
+
+        reserva.asiento.estado = 'disponible'
+        reserva.asiento.save()
+
+    return redirect('mis_reservas')

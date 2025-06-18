@@ -104,7 +104,7 @@ AUTH_USER_MODEL = 'vuelos.Usuario'
 
 LOGIN_REDIRECT_URL = 'mis_reservas'
 LOGIN_URL = 'login'
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = '/login/'
 
 
 # Internationalization

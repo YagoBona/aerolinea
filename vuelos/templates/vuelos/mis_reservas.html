@@ -9,10 +9,20 @@
         Asiento: {{ r.asiento.numero }}<br>
         Fecha: {{ r.vuelo.fecha_salida|date:"d/m/Y H:i" }}<br>
         Código: {{ r.codigo_reserva }}<br>
+
         {% if r.boleto %}
           <a href="{% url 'ver_boleto' r.codigo_reserva %}" class="btn btn-outline-primary btn-sm mt-2">Ver boleto</a>
         {% else %}
           <span class="text-danger">Boleto no generado</span>
+        {% endif %}
+
+        {% if r.estado != 'cancelada' %}
+          <form action="{% url 'cancelar_reserva' r.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Cancelar</button>
+          </form>
+        {% else %}
+          <span class="text-danger">Cancelada</span>
         {% endif %}
       </li>
     {% endfor %}
