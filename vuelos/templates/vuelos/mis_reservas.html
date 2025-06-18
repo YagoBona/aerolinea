@@ -1,15 +1,17 @@
+{% extends 'vuelos/base.html' %}
+{% block contenido %}
 <h2>Mis Reservas</h2>
 {% if reservas %}
-    <ul>
+  <ul class="list-group">
     {% for r in reservas %}
-        <li>
-            Vuelo {{ r.vuelo.origen }} → {{ r.vuelo.destino }} <br>
-            Asiento: {{ r.asiento.numero }} | Fecha: {{ r.vuelo.fecha_salida }}<br>
-            Código: {{ r.codigo_reserva }}
-        </li>
+      <li class="list-group-item">
+        Vuelo {{ r.vuelo.origen }} → {{ r.vuelo.destino }} | Asiento: {{ r.asiento.numero }}<br>
+        Fecha: {{ r.vuelo.fecha_salida }}<br>
+        Código: <strong>{{ r.codigo_reserva }}</strong>
+      </li>
     {% endfor %}
-    </ul>
+  </ul>
 {% else %}
-    <p>No tenés reservas aún.</p>
+  <p class="text-muted">No tenés reservas todavía.</p>
 {% endif %}
-<a href="{% url 'logout' %}">Cerrar sesión</a>
+{% endblock %}

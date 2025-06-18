@@ -1,19 +1,25 @@
+{% extends 'vuelos/base.html' %}
+{% block contenido %}
 <h2>{{ vuelo.origen }} → {{ vuelo.destino }}</h2>
-<p>Fecha: {{ vuelo.fecha_salida }} | Avión: {{ vuelo.avion.modelo }}</p>
+<p class="text-muted">Avión: {{ vuelo.avion.modelo }} | Fecha: {{ vuelo.fecha_salida }}</p>
 
-<h3>Seleccioná tu asiento</h3>
-<ul>
+<div class="row row-cols-2 row-cols-md-4 g-2">
   {% for asiento in asientos %}
-    <li>
-      Asiento {{ asiento.numero }} -
-      {% if asiento.estado == 'disponible' %}
-        <form action="{% url 'reservar_asiento' vuelo.id asiento.id %}" method="POST">
-            {% csrf_token %}
-            <button type="submit">Reservar</button>
-        </form>
-      {% else %}
-        {{ asiento.estado|title }}
-      {% endif %}
-    </li>
+    <div class="col">
+      <div class="card {% if asiento.estado == 'disponible' %}border-success{% else %}border-secondary{% endif %}">
+        <div class="card-body text-center">
+          <strong>{{ asiento.numero }}</strong><br>
+          {% if asiento.estado == 'disponible' %}
+            <form method="post" action="{% url 'reservar_asiento' vuelo.id asiento.id %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-success mt-2">Reservar</button>
+            </form>
+          {% else %}
+            <span class="text-muted">{{ asiento.estado|title }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
   {% endfor %}
-</ul>
+</div>
+{% endblock %}

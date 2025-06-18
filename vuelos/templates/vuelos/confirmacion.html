@@ -1,5 +1,9 @@
-<h2>¡Reserva confirmada!</h2>
-<p>Gracias {{ reserva.pasajero.nombre }}.</p>
-<p>Asiento: {{ reserva.asiento.numero }}</p>
-<p>Código de reserva: {{ reserva.codigo_reserva }}</p>
-<a href="{% url 'lista_vuelos' %}">Volver a vuelos</a>
+{% extends 'vuelos/base.html' %}
+{% block contenido %}
+<div class="alert alert-success">
+    <h4>¡Reserva confirmada!</h4>
+    <p><strong>Asiento:</strong> {{ reserva.asiento.numero }}</p>
+    <p><strong>Código de reserva:</strong> {{ reserva.codigo_reserva }}</p>
+    <a href="{% url 'mis_reservas' %}" class="btn btn-primary">Ver mis reservas</a>
+</div>
+{% endblock %}
