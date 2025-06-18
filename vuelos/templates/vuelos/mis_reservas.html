@@ -5,9 +5,15 @@
   <ul class="list-group">
     {% for r in reservas %}
       <li class="list-group-item">
-        Vuelo {{ r.vuelo.origen }} → {{ r.vuelo.destino }} | Asiento: {{ r.asiento.numero }}<br>
-        Fecha: {{ r.vuelo.fecha_salida }}<br>
-        Código: <strong>{{ r.codigo_reserva }}</strong>
+        <strong>{{ r.vuelo.origen }} → {{ r.vuelo.destino }}</strong><br>
+        Asiento: {{ r.asiento.numero }}<br>
+        Fecha: {{ r.vuelo.fecha_salida|date:"d/m/Y H:i" }}<br>
+        Código: {{ r.codigo_reserva }}<br>
+        {% if r.boleto %}
+          <a href="{% url 'ver_boleto' r.codigo_reserva %}" class="btn btn-outline-primary btn-sm mt-2">Ver boleto</a>
+        {% else %}
+          <span class="text-danger">Boleto no generado</span>
+        {% endif %}
       </li>
     {% endfor %}
   </ul>

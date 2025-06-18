@@ -1,9 +1,67 @@
 {% extends 'vuelos/base.html' %}
 {% block contenido %}
-<div class="alert alert-success">
-    <h4>¡Reserva confirmada!</h4>
-    <p><strong>Asiento:</strong> {{ reserva.asiento.numero }}</p>
-    <p><strong>Código de reserva:</strong> {{ reserva.codigo_reserva }}</p>
-    <a href="{% url 'mis_reservas' %}" class="btn btn-primary">Ver mis reservas</a>
+<div class="card shadow p-4 text-center mx-auto" style="max-width: 500px;" id="boleto">
+  <h3 class="mb-4 text-primary">🎫 Boleto Electrónico</h3>
+
+  <p><strong>Nombre:</strong> {{ reserva.pasajero.nombre }}</p>
+  <p><strong>Documento:</strong> {{ reserva.pasajero.documento }}</p>
+  <p><strong>Vuelo:</strong> {{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}</p>
+  <p><strong>Fecha:</strong> {{ reserva.vuelo.fecha_salida|date:"d/m/Y H:i" }}</p>
+  <p><strong>Asiento:</strong> {{ reserva.asiento.numero }}</p>
+  <p><strong>Código Reserva:</strong> {{ reserva.codigo_reserva }}</p>
+  <p><strong>Código Boleto:</strong> {{ boleto.codigo_barra }}</p>
+  
+
+
+  <div class="mt-4">
+    <button class="btn btn-success" onclick="descargarPDF()">📄 Descargar PDF</button>
+    <a href="{% url 'mis_reservas' %}" class="btn btn-outline-primary ms-2">Mis reservas</a>
+    <a href="{% url 'imprimir_boleto' reserva.codigo_reserva %}" class="btn btn-success">
+  🖨️ Imprimir boleto
+</a>
+  </div>
 </div>
+
+<!-- jsPDF CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  window.jsPDF = window.jspdf.jsPDF;
+
+  function descargarPDF() {
+    const doc = new jsPDF();
+
+    // Barra superior
+    doc.setFillColor(0, 119, 204); // azul
+    doc.rect(0, 0, 210, 20, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
+    doc.text("Aerolíneas Yager - Boleto Electrónico", 105, 12, { align: "center" });
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+
+    let y = 30;
+    function linea(label, valor) {
+      doc.setFont("helvetica", "bold");
+      doc.text(label + ":", 20, y);
+      doc.setFont("helvetica", "normal");
+      doc.text(valor, 70, y);
+      y += 10;
+    }
+
+    linea("Nombre", "{{ reserva.pasajero.nombre }}");
+    linea("Documento", "{{ reserva.pasajero.documento }}");
+    linea("Vuelo", "{{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}");
+    linea("Fecha", "{{ reserva.vuelo.fecha_salida|date:'d/m/Y H:i' }}");
+    linea("Asiento", "{{ reserva.asiento.numero }}");
+    linea("Código Reserva", "{{ reserva.codigo_reserva }}");
+    linea("Código Boleto", "{{ boleto.codigo_barra }}");
+
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text("Presentar este boleto en formato digital o impreso al embarcar.", 20, 280);
+
+    doc.save("boleto_{{ boleto.codigo_barra }}.pdf");
+  }
+</script>
 {% endblock %}

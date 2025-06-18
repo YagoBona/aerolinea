@@ -12,4 +12,7 @@ urlpatterns = [
     path('registro/', views.registro_usuario, name='registro'),
     path('mis-reservas/', views.mis_reservas, name='mis_reservas'),
     path('registro/', views.registro_usuario, name='registro'),
+    path('boleto/<str:codigo_reserva>/', views.ver_boleto, name='ver_boleto'),
+    path('boleto/imprimir/<str:codigo_reserva>/', views.imprimir_boleto, name='imprimir_boleto'),
+
 ]

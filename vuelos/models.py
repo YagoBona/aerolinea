@@ -75,13 +75,13 @@ class Reserva(models.Model):
 
 
 class Boleto(models.Model):
-    reserva = models.OneToOneField(Reserva, on_delete=models.CASCADE)
+    reserva = models.OneToOneField('Reserva', on_delete=models.CASCADE)
     codigo_barra = models.CharField(max_length=100)
     fecha_emision = models.DateTimeField(auto_now_add=True)
-    estado = models.CharField(max_length=20)
+    estado = models.CharField(max_length=20, default='emitido')
 
     def __str__(self):
-        return f"Boleto de {self.reserva.pasajero.nombre}"
+        return f"Boleto {self.codigo_barra} - {self.reserva.pasajero.nombre}"
 
 
 from django.contrib.auth.models import AbstractUser

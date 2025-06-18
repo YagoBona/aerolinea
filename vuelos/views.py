@@ -7,7 +7,7 @@ from django.contrib.auth import login
 from .models import Usuario
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from .models import Usuario, Pasajero
+from .models import Usuario, Pasajero, Boleto
 
 
 def lista_vuelos(request):
@@ -47,7 +47,15 @@ def reservar_asiento(request, vuelo_id, asiento_id):
         asiento.estado = 'reservado'
         asiento.save()
 
-        return render(request, 'vuelos/confirmacion.html', {'reserva': reserva})
+        boleto = Boleto.objects.create(
+            reserva=reserva,
+            codigo_barra=str(uuid.uuid4())[:12]
+        )
+
+        return render(request, 'vuelos/confirmacion.html', {
+            'reserva': reserva,
+            'boleto': boleto
+        })
 
     return redirect('detalle_vuelo', vuelo_id=vuelo.id)
 
@@ -82,3 +90,30 @@ def mis_reservas(request):
     pasajero = Pasajero.objects.filter(documento=request.user.username).first()
     reservas = Reserva.objects.filter(pasajero=pasajero).select_related('vuelo', 'asiento') if pasajero else []
     return render(request, 'vuelos/mis_reservas.html', {'reservas': reservas})
+
+@login_required
+def ver_boleto(request, codigo_reserva):
+    reserva = get_object_or_404(Reserva, codigo_reserva=codigo_reserva)
+    
+    # Seguridad: asegurarse de que el usuario accede solo a su reserva
+    if reserva.pasajero.usuario != request.user:
+        return render(request, 'vuelos/error.html', {'mensaje': 'No tenés permiso para ver este boleto.'})
+
+    boleto = getattr(reserva, 'boleto', None)
+    return render(request, 'vuelos/confirmacion.html', {
+        'reserva': reserva,
+        'boleto': boleto
+    })
+
+@login_required
+def imprimir_boleto(request, codigo_reserva):
+    reserva = get_object_or_404(Reserva, codigo_reserva=codigo_reserva)
+    if reserva.pasajero.usuario != request.user:
+        return render(request, 'vuelos/error.html', {'mensaje': 'No tenés permiso para ver este boleto.'})
+
+    boleto = getattr(reserva, 'boleto', None)
+    return render(request, 'vuelos/boleto_imprimible.html', {
+        'reserva': reserva,
+        'boleto': boleto
+    })
+

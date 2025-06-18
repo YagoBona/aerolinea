@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Boleto - Aerolíneas Yager</title>
+  <style>
+    @media print {
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+      .ticket {
+        border: 2px dashed #0077cc;
+        padding: 20px;
+        width: 80%;
+        margin: auto;
+        margin-top: 20px;
+      }
+      .ticket h2 {
+        color: #0077cc;
+        margin-bottom: 10px;
+      }
+      .ticket .data {
+        margin-bottom: 8px;
+      }
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 40px;
+    }
+    .ticket {
+      background: white;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      border: 2px dashed #0077cc;
+      border-radius: 10px;
+    }
+    .ticket h2 {
+      text-align: center;
+      color: #0077cc;
+      margin-bottom: 1rem;
+    }
+    .ticket .data {
+      margin: 10px 0;
+      font-size: 1rem;
+    }
+    .print-btn {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .print-btn button {
+      background: #0077cc;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="ticket">
+  <h2>🎫 Boleto de Embarque</h2>
+  <div class="data"><strong>Pasajero:</strong> {{ reserva.pasajero.nombre }}</div>
+  <div class="data"><strong>Documento:</strong> {{ reserva.pasajero.documento }}</div>
+  <div class="data"><strong>Vuelo:</strong> {{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}</div>
+  <div class="data"><strong>Fecha:</strong> {{ reserva.vuelo.fecha_salida|date:"d/m/Y H:i" }}</div>
+  <div class="data"><strong>Asiento:</strong> {{ reserva.asiento.numero }}</div>
+  <div class="data"><strong>Código Reserva:</strong> {{ reserva.codigo_reserva }}</div>
+  <div class="data"><strong>Código Boleto:</strong> {{ boleto.codigo_barra }}</div>
+  <div id="qrcode" style="margin-top: 20px; text-align: center;"></div>
+</div>
+
+
+<div class="print-btn">
+  <button onclick="window.print()">🖨️ Imprimir Boleto</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+  const qr = new QRCode(document.getElementById("qrcode"), {
+    text: "{{ request.build_absolute_uri }}",
+    width: 128,
+    height: 128
+  });
+</script>
+
+
+</body>
+</html>
