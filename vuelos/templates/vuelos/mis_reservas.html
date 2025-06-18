@@ -1,0 +1,15 @@
+<h2>Mis Reservas</h2>
+{% if reservas %}
+    <ul>
+    {% for r in reservas %}
+        <li>
+            Vuelo {{ r.vuelo.origen }} → {{ r.vuelo.destino }} <br>
+            Asiento: {{ r.asiento.numero }} | Fecha: {{ r.vuelo.fecha_salida }}<br>
+            Código: {{ r.codigo_reserva }}
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No tenés reservas aún.</p>
+{% endif %}
+<a href="{% url 'logout' %}">Cerrar sesión</a>

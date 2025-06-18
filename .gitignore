@@ -1,0 +1,54 @@
+# Entorno virtual
+env/
+venv/
+ENV/
+*.env
+*.venv
+
+# Archivos Python compilados
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Base de datos SQLite
+db.sqlite3
+
+# Migraciones
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# Archivos de usuario
+*.log
+*.pot
+*.pyc
+*.pyo
+*.sqlite3
+*.mo
+
+# Configuración del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos temporales
+*.bak
+*.tmp
+*.swp
+
+# VSCode
+.vscode/
+
+# Archivos de test
+coverage/
+htmlcov/
+*.cover
+.cache/
+.tox/
+.pytest_cache/
+
+# Archivos de JetBrains (PyCharm, etc.)
+.idea/
+
+# Archivos de deployment (si no los usás todavía)
+*.zip
+*.tar
+*.tar.gz

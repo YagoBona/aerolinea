@@ -1,0 +1,19 @@
+<h2>{{ vuelo.origen }} → {{ vuelo.destino }}</h2>
+<p>Fecha: {{ vuelo.fecha_salida }} | Avión: {{ vuelo.avion.modelo }}</p>
+
+<h3>Seleccioná tu asiento</h3>
+<ul>
+  {% for asiento in asientos %}
+    <li>
+      Asiento {{ asiento.numero }} -
+      {% if asiento.estado == 'disponible' %}
+        <form action="{% url 'reservar_asiento' vuelo.id asiento.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit">Reservar</button>
+        </form>
+      {% else %}
+        {{ asiento.estado|title }}
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
