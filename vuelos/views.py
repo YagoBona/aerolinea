@@ -27,10 +27,15 @@ def reservar_asiento(request, vuelo_id, asiento_id):
     vuelo = get_object_or_404(Vuelo, id=vuelo_id)
     asiento = get_object_or_404(Asiento, id=asiento_id)
 
-    if asiento.estado != 'disponible':
+    # Verificar si el asiento ya tiene una reserva
+    from vuelos.models import Reserva
+    if Reserva.objects.filter(asiento=asiento).exists() or asiento.estado != 'disponible':
         return render(request, 'vuelos/error.html', {'mensaje': 'El asiento ya está reservado.'})
 
-    pasajero = Pasajero.objects.get(usuario=request.user)
+    try:
+        pasajero = Pasajero.objects.get(usuario=request.user)
+    except Pasajero.DoesNotExist:
+        return render(request, 'vuelos/error.html', {'mensaje': 'No se encontró el perfil de pasajero para el usuario actual. Por favor, registrate como pasajero.'})
 
     if request.method == 'POST':
         reserva = Reserva.objects.create(
@@ -132,3 +137,8 @@ def cancelar_reserva(request, reserva_id):
         reserva.asiento.save()
 
     return redirect('mis_reservas')
+
+def inicio(request):
+    from .models import Vuelo
+    vuelos = Vuelo.objects.filter(estado='activo').order_by('fecha_salida')
+    return render(request, 'vuelos/inicio.html', {'vuelos': vuelos})

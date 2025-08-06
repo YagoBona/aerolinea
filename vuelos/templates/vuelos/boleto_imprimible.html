@@ -3,82 +3,108 @@
 <head>
   <meta charset="UTF-8">
   <title>Boleto - Aerolíneas Yager</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <style>
-    @media print {
-      body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-      }
-      .ticket {
-        border: 2px dashed #0077cc;
-        padding: 20px;
-        width: 80%;
-        margin: auto;
-        margin-top: 20px;
-      }
-      .ticket h2 {
-        color: #0077cc;
-        margin-bottom: 10px;
-      }
-      .ticket .data {
-        margin-bottom: 8px;
-      }
-    }
-
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #fff4e3 0%, #fff7ed 100%);
       padding: 40px;
     }
     .ticket {
       background: white;
-      padding: 20px;
+      padding: 32px 24px;
       max-width: 600px;
       margin: auto;
-      border: 2px dashed #0077cc;
-      border-radius: 10px;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(255,152,0,0.10), 0 1.5px 0 #ff9800;
+      border: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .ticket::before {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; top: 60px; height: 1px;
+      border-top: 2px dashed #ff9800;
+      opacity: 0.3;
     }
     .ticket h2 {
       text-align: center;
-      color: #0077cc;
-      margin-bottom: 1rem;
+      color: #ff9800;
+      font-size: 2.1rem;
+      margin-bottom: 1.2rem;
+      letter-spacing: 1px;
     }
     .ticket .data {
-      margin: 10px 0;
-      font-size: 1rem;
+      margin: 12px 0;
+      font-size: 1.08rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ticket .data strong {
+      min-width: 120px;
+      color: #ff9800;
+      font-weight: 500;
+    }
+    .ticket .data i {
+      color: #ff9800;
+      font-size: 1.2rem;
+      margin-right: 4px;
+    }
+    .ticket .codigo {
+      background: #fff4e3;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 1.1rem;
+      text-align: center;
+      margin: 18px 0 0 0;
+      letter-spacing: 1px;
+      color: #ff9800;
+      font-weight: 600;
+    }
+    #qrcode {
+      margin-top: 18px;
+      text-align: center;
     }
     .print-btn {
       display: flex;
       justify-content: center;
-      margin-top: 20px;
+      margin-top: 28px;
     }
     .print-btn button {
-      background: #0077cc;
+      background: linear-gradient(90deg, #ff9800 60%, #ffb74d 100%);
       color: white;
-      padding: 10px 20px;
+      padding: 12px 32px;
       border: none;
-      border-radius: 5px;
-      font-size: 1rem;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(255,152,0,0.08);
+      transition: background 0.2s;
+    }
+    .print-btn button:hover {
+      background: linear-gradient(90deg, #ff9800 60%, #ff9800 100%);
     }
   </style>
 </head>
 <body>
 
 <div class="ticket">
-  <h2>🎫 Boleto de Embarque</h2>
-  <div class="data"><strong>Pasajero:</strong> {{ reserva.pasajero.nombre }}</div>
-  <div class="data"><strong>Documento:</strong> {{ reserva.pasajero.documento }}</div>
-  <div class="data"><strong>Vuelo:</strong> {{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}</div>
-  <div class="data"><strong>Fecha:</strong> {{ reserva.vuelo.fecha_salida|date:"d/m/Y H:i" }}</div>
-  <div class="data"><strong>Asiento:</strong> {{ reserva.asiento.numero }}</div>
-  <div class="data"><strong>Código Reserva:</strong> {{ reserva.codigo_reserva }}</div>
-  <div class="data"><strong>Código Boleto:</strong> {{ boleto.codigo_barra }}</div>
-  <div id="qrcode" style="margin-top: 20px; text-align: center;"></div>
+  <h2><i class="bi bi-airplane"></i> Boleto de Embarque</h2>
+  <div class="data"><i class="bi bi-person"></i> <strong>Pasajero:</strong> {{ reserva.pasajero.nombre }}</div>
+  <div class="data"><i class="bi bi-card-text"></i> <strong>Documento:</strong> {{ reserva.pasajero.documento }}</div>
+  <div class="data"><i class="bi bi-geo-alt"></i> <strong>Vuelo:</strong> {{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}</div>
+  <div class="data"><i class="bi bi-calendar-event"></i> <strong>Fecha:</strong> {{ reserva.vuelo.fecha_salida|date:"d/m/Y H:i" }}</div>
+  <div class="data"><i class="bi bi-grid-3x3-gap"></i> <strong>Asiento:</strong> {{ reserva.asiento.numero }}</div>
+  <div class="codigo"><i class="bi bi-hash"></i> Código Reserva: {{ reserva.codigo_reserva }}</div>
+  <div class="codigo"><i class="bi bi-upc"></i> Código Boleto: {{ boleto.codigo_barra }}</div>
+  <div id="qrcode"></div>
 </div>
 
-
 <div class="print-btn">
-  <button onclick="window.print()">🖨️ Imprimir Boleto</button>
+  <button onclick="window.print()"><i class="bi bi-printer"></i> Imprimir Boleto</button>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
@@ -88,7 +114,6 @@
     height: 128
   });
 </script>
-
 
 </body>
 </html>

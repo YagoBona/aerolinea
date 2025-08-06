@@ -1,45 +1,43 @@
 {% extends 'vuelos/base.html' %}
 {% block contenido %}
-<div class="card shadow p-4 text-center mx-auto" style="max-width: 500px;" id="boleto">
-  <h3 class="mb-4 text-primary">🎫 Boleto Electrónico</h3>
-
-  <p><strong>Nombre:</strong> {{ reserva.pasajero.nombre }}</p>
-  <p><strong>Documento:</strong> {{ reserva.pasajero.documento }}</p>
-  <p><strong>Vuelo:</strong> {{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}</p>
-  <p><strong>Fecha:</strong> {{ reserva.vuelo.fecha_salida|date:"d/m/Y H:i" }}</p>
-  <p><strong>Asiento:</strong> {{ reserva.asiento.numero }}</p>
-  <p><strong>Código Reserva:</strong> {{ reserva.codigo_reserva }}</p>
-  <p><strong>Código Boleto:</strong> {{ boleto.codigo_barra }}</p>
-  
-
-
-  <div class="mt-4">
-    <button class="btn btn-success" onclick="descargarPDF()">📄 Descargar PDF</button>
-    <a href="{% url 'mis_reservas' %}" class="btn btn-outline-primary ms-2">Mis reservas</a>
-    <a href="{% url 'imprimir_boleto' reserva.codigo_reserva %}" class="btn btn-success">
-  🖨️ Imprimir boleto
-</a>
+<div class="ticket mt-5" style="background:white; padding:32px 24px; max-width:520px; margin:auto; border-radius:18px; box-shadow:0 4px 24px rgba(255,152,0,0.10), 0 1.5px 0 #ff9800; border:none; position:relative; overflow:hidden;">
+  <h2 style="text-align:center; color:#ff9800; font-size:2.1rem; margin-bottom:1.2rem; letter-spacing:1px;"><i class="bi bi-airplane"></i> Boleto Electrónico</h2>
+  <div class="data" style="margin:12px 0; font-size:1.08rem; display:flex; align-items:center; gap:8px;"><i class="bi bi-person"></i> <strong style="min-width:120px; color:#ff9800; font-weight:500;">Pasajero:</strong> {{ reserva.pasajero.nombre }}</div>
+  <div class="data" style="margin:12px 0; font-size:1.08rem; display:flex; align-items:center; gap:8px;"><i class="bi bi-card-text"></i> <strong style="min-width:120px; color:#ff9800; font-weight:500;">Documento:</strong> {{ reserva.pasajero.documento }}</div>
+  <div class="data" style="margin:12px 0; font-size:1.08rem; display:flex; align-items:center; gap:8px;"><i class="bi bi-geo-alt"></i> <strong style="min-width:120px; color:#ff9800; font-weight:500;">Vuelo:</strong> {{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}</div>
+  <div class="data" style="margin:12px 0; font-size:1.08rem; display:flex; align-items:center; gap:8px;"><i class="bi bi-calendar-event"></i> <strong style="min-width:120px; color:#ff9800; font-weight:500;">Fecha:</strong> {{ reserva.vuelo.fecha_salida|date:"d/m/Y H:i" }}</div>
+  <div class="data" style="margin:12px 0; font-size:1.08rem; display:flex; align-items:center; gap:8px;"><i class="bi bi-grid-3x3-gap"></i> <strong style="min-width:120px; color:#ff9800; font-weight:500;">Asiento:</strong> {{ reserva.asiento.numero }}</div>
+  <div class="codigo" style="background:#fff4e3; border-radius:8px; padding:8px 12px; font-size:1.1rem; text-align:center; margin:18px 0 0 0; letter-spacing:1px; color:#ff9800; font-weight:600;"><i class="bi bi-hash"></i> Código Reserva: {{ reserva.codigo_reserva }}</div>
+  <div class="codigo" style="background:#fff4e3; border-radius:8px; padding:8px 12px; font-size:1.1rem; text-align:center; margin:10px 0 0 0; letter-spacing:1px; color:#ff9800; font-weight:600;"><i class="bi bi-upc"></i> Código Boleto: {{ boleto.codigo_barra }}</div>
+  <div id="qrcode" style="margin-top:18px; text-align:center;"></div>
+  <div class="print-btn" style="display:flex; justify-content:center; margin-top:28px; gap:10px;">
+    <button onclick="descargarPDF()" class="btn btn-success rounded-pill px-4"><i class="bi bi-file-earmark-pdf"></i> Descargar PDF</button>
+    <a href="{% url 'mis_reservas' %}" class="btn btn-outline-primary rounded-pill px-4"><i class="bi bi-ticket-perforated"></i> Mis reservas</a>
+    <a href="{% url 'imprimir_boleto' reserva.codigo_reserva %}" class="btn btn-primary rounded-pill px-4"><i class="bi bi-printer"></i> Imprimir boleto</a>
   </div>
 </div>
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+  const qr = new QRCode(document.getElementById("qrcode"), {
+    text: "{{ request.build_absolute_uri }}",
+    width: 128,
+    height: 128
+  });
+</script>
 <!-- jsPDF CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
   window.jsPDF = window.jspdf.jsPDF;
-
   function descargarPDF() {
     const doc = new jsPDF();
-
-    // Barra superior
-    doc.setFillColor(0, 119, 204); // azul
+    doc.setFillColor(0, 119, 204);
     doc.rect(0, 0, 210, 20, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(16);
     doc.text("Aerolíneas Yager - Boleto Electrónico", 105, 12, { align: "center" });
-
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(12);
-
     let y = 30;
     function linea(label, valor) {
       doc.setFont("helvetica", "bold");
@@ -48,7 +46,6 @@
       doc.text(valor, 70, y);
       y += 10;
     }
-
     linea("Nombre", "{{ reserva.pasajero.nombre }}");
     linea("Documento", "{{ reserva.pasajero.documento }}");
     linea("Vuelo", "{{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}");
@@ -56,11 +53,9 @@
     linea("Asiento", "{{ reserva.asiento.numero }}");
     linea("Código Reserva", "{{ reserva.codigo_reserva }}");
     linea("Código Boleto", "{{ boleto.codigo_barra }}");
-
     doc.setFontSize(10);
     doc.setTextColor(100);
     doc.text("Presentar este boleto en formato digital o impreso al embarcar.", 20, 280);
-
     doc.save("boleto_{{ boleto.codigo_barra }}.pdf");
   }
 </script>

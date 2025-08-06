@@ -7,7 +7,9 @@ from django.contrib.auth.views import LoginView
 from vuelos.forms import FormularioLogin
 
 urlpatterns = [
-    path('', views.lista_vuelos, name='lista_vuelos'),
+    path('', views.inicio, name='inicio'),
+    path('inicio/', views.inicio, name='inicio'),
+    path('vuelos/', views.lista_vuelos, name='lista_vuelos'),
     path('vuelo/<int:vuelo_id>/', views.detalle_vuelo, name='detalle_vuelo'),
     path('reservar/<int:vuelo_id>/<int:asiento_id>/', views.reservar_asiento, name='reservar_asiento'),
     path('login/', LoginView.as_view(
