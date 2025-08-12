@@ -1,9 +1,10 @@
 {% extends 'vuelos/base.html' %}
+{% load static %}
 
 {% block contenido %}
 <div class="inicio-container" style="position:relative; text-align:center; margin-top:0;">
     <div style="width:100vw; height:320px; overflow:hidden; position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw;">
-        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80" alt="Avión" style="width:100vw; height:320px; object-fit:cover; filter:blur(6px) brightness(0.7);">
+        <img src="{% static 'img/fondo_carrusel.jpg' %}" alt="Cielo con nubes" style="width:100vw; height:320px; object-fit:cover; filter:blur(6px) brightness(0.7);">
         <div style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center;">
             <h1 style="color:white; font-size:3rem; text-shadow:0 2px 8px #222;">Bienvenido a Aerolíneas Yager</h1>
             <p style="color:white; font-size:1.3rem; text-shadow:0 1px 6px #222;">Tu viaje comienza aquí. Explora nuestros vuelos y reserva tu próxima aventura.</p>

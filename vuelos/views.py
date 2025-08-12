@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Vuelo, Asiento, Reserva, Pasajero
 from django.utils import timezone
@@ -38,6 +39,7 @@ def reservar_asiento(request, vuelo_id, asiento_id):
         return render(request, 'vuelos/error.html', {'mensaje': 'No se encontró el perfil de pasajero para el usuario actual. Por favor, registrate como pasajero.'})
 
     if request.method == 'POST':
+
         reserva = Reserva.objects.create(
             vuelo=vuelo,
             pasajero=pasajero,
@@ -54,6 +56,8 @@ def reservar_asiento(request, vuelo_id, asiento_id):
             reserva=reserva,
             codigo_barra=str(uuid.uuid4())[:12]
         )
+
+
 
         return render(request, 'vuelos/confirmacion.html', {
             'reserva': reserva,

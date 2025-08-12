@@ -1,32 +1,47 @@
 {% extends 'vuelos/base.html' %}
 {% block contenido %}
-<h2>Mis Reservas</h2>
+<h2 class="mb-4" style="color:#ff9800; font-weight:700; letter-spacing:1px;"><i class="bi bi-ticket-perforated"></i> Mis Reservas</h2>
 {% if reservas %}
-  <ul class="list-group">
+  <div class="row g-3">
     {% for r in reservas %}
-      <li class="list-group-item">
-        <strong>{{ r.vuelo.origen }} → {{ r.vuelo.destino }}</strong><br>
-        Asiento: {{ r.asiento.numero }}<br>
-        Fecha: {{ r.vuelo.fecha_salida|date:"d/m/Y H:i" }}<br>
-        Código: {{ r.codigo_reserva }}<br>
-
-        {% if r.boleto %}
-          <a href="{% url 'ver_boleto' r.codigo_reserva %}" class="btn btn-outline-primary btn-sm mt-2">Ver boleto</a>
-        {% else %}
-          <span class="text-danger">Boleto no generado</span>
-        {% endif %}
-
-        {% if r.estado != 'cancelada' %}
-          <form action="{% url 'cancelar_reserva' r.id %}" method="post" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger btn-sm">Cancelar</button>
-          </form>
-        {% else %}
-          <span class="text-danger">Cancelada</span>
-        {% endif %}
-      </li>
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card shadow-sm h-100" style="border:2px solid #ff9800; border-radius:18px;">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-2">
+              <i class="bi bi-airplane" style="color:#ff9800; font-size:1.5rem;"></i>
+              <span class="ms-2" style="font-weight:600; font-size:1.1rem;">{{ r.vuelo.origen }} → {{ r.vuelo.destino }}</span>
+            </div>
+            <div class="mb-1"><i class="bi bi-calendar-event" style="color:#ff9800;"></i> <span style="color:#888;">Fecha:</span> <strong>{{ r.vuelo.fecha_salida|date:"d/m/Y H:i" }}</strong></div>
+            <div class="mb-1"><i class="bi bi-grid-3x3-gap" style="color:#ff9800;"></i> <span style="color:#888;">Asiento:</span> <strong>{{ r.asiento.numero }}</strong></div>
+            <div class="mb-1"><i class="bi bi-hash" style="color:#ff9800;"></i> <span style="color:#888;">Código:</span> <strong>{{ r.codigo_reserva }}</strong></div>
+            <div class="mb-2">
+              {% if r.estado == 'cancelada' %}
+                <span class="badge bg-danger">Cancelada</span>
+              {% elif r.vuelo.fecha_salida < today %}
+                <span class="badge bg-secondary">Vencida</span>
+              {% else %}
+                <span class="badge bg-success">Próxima</span>
+              {% endif %}
+            </div>
+            <div class="d-flex flex-wrap gap-2 mt-2">
+              {% if r.boleto %}
+                <a href="{% url 'ver_boleto' r.codigo_reserva %}" class="btn btn-outline-primary btn-sm rounded-pill"><i class="bi bi-ticket-detailed"></i> Ver boleto</a>
+                <a href="{% url 'imprimir_boleto' r.codigo_reserva %}" class="btn btn-success btn-sm rounded-pill"><i class="bi bi-printer"></i> Imprimir/Descargar</a>
+              {% else %}
+                <span class="text-danger">Boleto no generado</span>
+              {% endif %}
+              {% if r.estado != 'cancelada' %}
+                <form action="{% url 'cancelar_reserva' r.id %}" method="post" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger btn-sm rounded-pill"><i class="bi bi-x-circle"></i> Cancelar</button>
+                </form>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
     {% endfor %}
-  </ul>
+  </div>
 {% else %}
   <p class="text-muted">No tenés reservas todavía.</p>
 {% endif %}

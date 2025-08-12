@@ -30,33 +30,97 @@
 <script>
   window.jsPDF = window.jspdf.jsPDF;
   function descargarPDF() {
-    const doc = new jsPDF();
-    doc.setFillColor(0, 119, 204);
-    doc.rect(0, 0, 210, 20, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(16);
-    doc.text("Aerolíneas Yager - Boleto Electrónico", 105, 12, { align: "center" });
-    doc.setTextColor(0, 0, 0);
+    // Boarding pass horizontal (landscape) estilo profesional
+    const doc = new jsPDF('l', 'mm', 'a5'); // horizontal, tamaño medio
+    // Colores
+    const naranja = [255,152,0];
+    const crema = [255,247,237];
+    const gris = [120,120,120];
+    // Fondo
+    doc.setFillColor(...crema);
+    doc.rect(0, 0, 210, 148, 'F');
+    // Card principal
+    const cardX = 10, cardY = 12, cardW = 190, cardH = 124;
+    doc.setFillColor(255,255,255);
+    doc.roundedRect(cardX, cardY, cardW, cardH, 10, 10, 'F');
+    doc.setDrawColor(...naranja);
+    doc.setLineWidth(1.2);
+    doc.roundedRect(cardX, cardY, cardW, cardH, 10, 10, 'S');
+
+    // Header naranja
+    doc.setFillColor(...naranja);
+    doc.roundedRect(cardX, cardY, cardW, 28, 10, 10, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(20);
+    doc.text('BOLETO ELECTRÓNICO', cardX+cardW/2, cardY+18, {align:'center'});
+
+    // Datos principales (lado izquierdo, solo pasajero y documento arriba)
     doc.setFontSize(12);
-    let y = 30;
-    function linea(label, valor) {
-      doc.setFont("helvetica", "bold");
-      doc.text(label + ":", 20, y);
-      doc.setFont("helvetica", "normal");
-      doc.text(valor, 70, y);
-      y += 10;
+    doc.setTextColor(...gris);
+    let left = cardX+14, top = cardY+38, lh = 9;
+    doc.setFont('helvetica', 'normal');
+    doc.text('Pasajero:', left, top);
+    doc.text('Documento:', left, top+lh);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0,0,0);
+    doc.text(`{{ reserva.pasajero.nombre }}`, left+38, top);
+    doc.text(`{{ reserva.pasajero.documento }}`, left+38, top+lh);
+
+    // Datos de vuelo, fecha y asiento más abajo, alineados a la izquierda
+    let infoY = cardY+72;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+    doc.setTextColor(...gris);
+    doc.text('Vuelo:', left, infoY);
+    doc.text('Fecha:', left, infoY+lh);
+    doc.text('Asiento:', left, infoY+lh*2);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0,0,0);
+    doc.text(`{{ reserva.vuelo.origen }} Hacia {{ reserva.vuelo.destino }}`, left+38, infoY);
+    doc.text(`{{ reserva.vuelo.fecha_salida|date:'d/m/Y H:i' }}`, left+38, infoY+lh);
+    doc.text(`{{ reserva.asiento.numero }}`, left+38, infoY+lh*2);
+
+    // Códigos (lado derecho, arriba, más compactos)
+    let right = cardX+cardW-90, codeY = cardY+38;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    // Código reserva
+    doc.setFillColor(255,244,227);
+    doc.roundedRect(right, codeY-7, 80, 11, 5, 5, 'F');
+    doc.setTextColor(...naranja);
+    doc.text(`# Reserva: {{ reserva.codigo_reserva }}`, right+40, codeY+1, {align:'center', maxWidth: 76});
+    // Código boleto
+    doc.setFillColor(...naranja);
+    doc.roundedRect(right, codeY+6, 80, 11, 5, 5, 'F');
+    doc.setTextColor(255,255,255);
+    doc.text(`Boleto: {{ boleto.codigo_barra }}`, right+40, codeY+13, {align:'center', maxWidth: 76});
+
+    // Línea divisoria
+    doc.setDrawColor(230,230,230);
+    doc.setLineWidth(0.7);
+    doc.line(cardX+10, cardY+65, cardX+cardW-10, cardY+65);
+
+    // QR más chico y alineado abajo a la derecha
+    const qrEl = document.querySelector('#qrcode img');
+    let qrSize = 36;
+    let qrX = cardX+cardW-qrSize-18;
+    let qrY = cardY+cardH-qrSize-16;
+    if(qrEl){
+      doc.addImage(qrEl.src, 'PNG', qrX, qrY, qrSize, qrSize);
     }
-    linea("Nombre", "{{ reserva.pasajero.nombre }}");
-    linea("Documento", "{{ reserva.pasajero.documento }}");
-    linea("Vuelo", "{{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}");
-    linea("Fecha", "{{ reserva.vuelo.fecha_salida|date:'d/m/Y H:i' }}");
-    linea("Asiento", "{{ reserva.asiento.numero }}");
-    linea("Código Reserva", "{{ reserva.codigo_reserva }}");
-    linea("Código Boleto", "{{ boleto.codigo_barra }}");
+    // Mensaje final, alineado a la izquierda y más arriba
+    doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text("Presentar este boleto en formato digital o impreso al embarcar.", 20, 280);
-    doc.save("boleto_{{ boleto.codigo_barra }}.pdf");
+    doc.setTextColor(...gris);
+    doc.text('Presentar este boleto en formato digital o impreso al embarcar.', cardX+16, cardY+cardH-18, {maxWidth: cardW-qrSize-40});
+
+    // Branding
+    doc.setFontSize(9);
+    doc.setTextColor(200,200,200);
+    doc.text('Aerolíneas Yager', cardX+cardW-40, cardY+cardH-6, {align:'right'});
+
+    doc.save('boleto_{{ boleto.codigo_barra }}.pdf');
   }
 </script>
 {% endblock %}
