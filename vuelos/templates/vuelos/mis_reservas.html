@@ -1,6 +1,7 @@
 {% extends 'vuelos/base.html' %}
+{% load i18n %}
 {% block contenido %}
-<h2 class="mb-4" style="color:#ff9800; font-weight:700; letter-spacing:1px;"><i class="bi bi-ticket-perforated"></i> Mis Reservas</h2>
+<h2 class="mb-4" style="color:#ff9800; font-weight:700; letter-spacing:1px;"><i class="bi bi-ticket-perforated"></i> {% trans "Mis Reservas" %}</h2>
 {% if reservas %}
   <div class="row g-3">
     {% for r in reservas %}
@@ -11,29 +12,29 @@
               <i class="bi bi-airplane" style="color:#ff9800; font-size:1.5rem;"></i>
               <span class="ms-2" style="font-weight:600; font-size:1.1rem;">{{ r.vuelo.origen }} → {{ r.vuelo.destino }}</span>
             </div>
-            <div class="mb-1"><i class="bi bi-calendar-event" style="color:#ff9800;"></i> <span style="color:#888;">Fecha:</span> <strong>{{ r.vuelo.fecha_salida|date:"d/m/Y H:i" }}</strong></div>
-            <div class="mb-1"><i class="bi bi-grid-3x3-gap" style="color:#ff9800;"></i> <span style="color:#888;">Asiento:</span> <strong>{{ r.asiento.numero }}</strong></div>
-            <div class="mb-1"><i class="bi bi-hash" style="color:#ff9800;"></i> <span style="color:#888;">Código:</span> <strong>{{ r.codigo_reserva }}</strong></div>
+            <div class="mb-1"><i class="bi bi-calendar-event" style="color:#ff9800;"></i> <span style="color:#888;">{% trans "Fecha:" %}</span> <strong>{{ r.vuelo.fecha_salida|date:"d/m/Y H:i" }}</strong></div>
+            <div class="mb-1"><i class="bi bi-grid-3x3-gap" style="color:#ff9800;"></i> <span style="color:#888;">{% trans "Asiento:" %}</span> <strong>{{ r.asiento.numero }}</strong></div>
+            <div class="mb-1"><i class="bi bi-hash" style="color:#ff9800;"></i> <span style="color:#888;">{% trans "Código:" %}</span> <strong>{{ r.codigo_reserva }}</strong></div>
             <div class="mb-2">
               {% if r.estado == 'cancelada' %}
-                <span class="badge bg-danger">Cancelada</span>
+                <span class="badge bg-danger">{% trans "Cancelada" %}</span>
               {% elif r.vuelo.fecha_salida < today %}
-                <span class="badge bg-secondary">Vencida</span>
+                <span class="badge bg-secondary">{% trans "Vencida" %}</span>
               {% else %}
-                <span class="badge bg-success">Próxima</span>
+                <span class="badge bg-success">{% trans "Próxima" %}</span>
               {% endif %}
             </div>
             <div class="d-flex flex-wrap gap-2 mt-2">
               {% if r.boleto %}
-                <a href="{% url 'ver_boleto' r.codigo_reserva %}" class="btn btn-outline-primary btn-sm rounded-pill"><i class="bi bi-ticket-detailed"></i> Ver boleto</a>
-                <a href="{% url 'imprimir_boleto' r.codigo_reserva %}" class="btn btn-success btn-sm rounded-pill"><i class="bi bi-printer"></i> Imprimir/Descargar</a>
+                <a href="{% url 'ver_boleto' r.codigo_reserva %}" class="btn btn-outline-primary btn-sm rounded-pill"><i class="bi bi-ticket-detailed"></i> {% trans "Ver boleto" %}</a>
+                <a href="{% url 'imprimir_boleto' r.codigo_reserva %}" class="btn btn-success btn-sm rounded-pill"><i class="bi bi-printer"></i> {% trans "Imprimir/Descargar" %}</a>
               {% else %}
-                <span class="text-danger">Boleto no generado</span>
+                <span class="text-danger">{% trans "Boleto no generado" %}</span>
               {% endif %}
               {% if r.estado != 'cancelada' %}
                 <form action="{% url 'cancelar_reserva' r.id %}" method="post" style="display:inline;">
                   {% csrf_token %}
-                  <button type="submit" class="btn btn-danger btn-sm rounded-pill"><i class="bi bi-x-circle"></i> Cancelar</button>
+                  <button type="submit" class="btn btn-danger btn-sm rounded-pill"><i class="bi bi-x-circle"></i> {% trans "Cancelar" %}</button>
                 </form>
               {% endif %}
             </div>

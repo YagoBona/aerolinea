@@ -1,19 +1,20 @@
 {% extends 'vuelos/base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block contenido %}
 <div class="inicio-container" style="position:relative; text-align:center; margin-top:0;">
     <div style="width:100vw; height:320px; overflow:hidden; position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw;">
         <img src="{% static 'img/fondo_carrusel.jpg' %}" alt="Cielo con nubes" style="width:100vw; height:320px; object-fit:cover; filter:blur(6px) brightness(0.7);">
         <div style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-            <h1 style="color:white; font-size:3rem; text-shadow:0 2px 8px #222;">Bienvenido a Aerolíneas Yager</h1>
-            <p style="color:white; font-size:1.3rem; text-shadow:0 1px 6px #222;">Tu viaje comienza aquí. Explora nuestros vuelos y reserva tu próxima aventura.</p>
+            <h1 style="color:white; font-size:3rem; text-shadow:0 2px 8px #222;">{% trans "Bienvenido a Aerolíneas Yager" %}</h1>
+            <p style="color:white; font-size:1.3rem; text-shadow:0 1px 6px #222;">{% trans "Tu viaje comienza aquí. Explora nuestros vuelos y reserva tu próxima aventura." %}</p>
         </div>
     </div>
 </div>
 
 <div class="container mt-5">
-    <h2 class="mb-4">Vuelos disponibles</h2>
+    <h2 class="mb-4">{% trans "Vuelos disponibles" %}</h2>
     <div class="row">
         {% for vuelo in vuelos %}
         <div class="col-md-6 col-lg-4 mb-4">
@@ -21,16 +22,16 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ vuelo.origen }} → {{ vuelo.destino }}</h5>
                     <p class="card-text">
-                        <strong>Salida:</strong> {{ vuelo.fecha_salida|date:"d/m/Y H:i" }}<br>
-                        <strong>Llegada:</strong> {{ vuelo.fecha_llegada|date:"d/m/Y H:i" }}<br>
-                        <strong>Precio:</strong> ${{ vuelo.precio_base }}
+                        <strong>{% trans "Salida:" %}</strong> {{ vuelo.fecha_salida|date:"d/m/Y H:i" }}<br>
+                        <strong>{% trans "Llegada:" %}</strong> {{ vuelo.fecha_llegada|date:"d/m/Y H:i" }}<br>
+                        <strong>{% trans "Precio:" %}</strong> ${{ vuelo.precio_base }}
                     </p>
-                    <a href="{% url 'detalle_vuelo' vuelo.id %}" class="btn btn-primary">Ver detalles</a>
+                    <a href="{% url 'detalle_vuelo' vuelo.id %}" class="btn btn-primary">{% trans "Ver detalles" %}</a>
                 </div>
             </div>
         </div>
         {% empty %}
-        <p class="text-muted">No hay vuelos disponibles en este momento.</p>
+    <p class="text-muted">{% trans "No hay vuelos disponibles en este momento." %}</p>
         {% endfor %}
     </div>
 </div>

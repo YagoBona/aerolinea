@@ -6,6 +6,8 @@ from django.contrib.auth.views import LogoutView
 from django.contrib.auth.views import LoginView
 from vuelos.forms import FormularioLogin
 
+from django.conf.urls.i18n import set_language
+
 urlpatterns = [
     path('', views.inicio, name='inicio'),
     path('inicio/', views.inicio, name='inicio'),
@@ -19,8 +21,8 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('registro/', views.registro_usuario, name='registro'),
     path('mis-reservas/', views.mis_reservas, name='mis_reservas'),
-    path('registro/', views.registro_usuario, name='registro'),
     path('boleto/<str:codigo_reserva>/', views.ver_boleto, name='ver_boleto'),
     path('boleto/imprimir/<str:codigo_reserva>/', views.imprimir_boleto, name='imprimir_boleto'),
     path('cancelar/<int:reserva_id>/', views.cancelar_reserva, name='cancelar_reserva'),
+    path('set_language/', set_language, name='set_language'),
 ]
