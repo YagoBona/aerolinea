@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-14 16:09-0300\n"
+"POT-Creation-Date: 2025-08-14 17:02-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1251,7 +1251,7 @@ msgid "Connect, get help, or contribute"
 msgstr ""
 
 #: .\vuelos\templates\vuelos\base.html:8 .\vuelos\templates\vuelos\base.html:98
-#: .\vuelos\templates\vuelos\base.html:148
+#: .\vuelos\templates\vuelos\base.html:160
 msgid "Aerolíneas Yager"
 msgstr "Yager Airlines"
 
@@ -1307,7 +1307,7 @@ msgid "No hay vuelos disponibles en este momento."
 msgstr "No flights available at this time."
 
 #: .\vuelos\templates\vuelos\mis_reservas.html:4
-#, fuzzy
+
 #| msgid "Mis reservas"
 msgid "Mis Reservas"
 msgstr "My bookings"
@@ -1351,3 +1351,7 @@ msgstr "Ticket not generated"
 #: .\vuelos\templates\vuelos\mis_reservas.html:37
 msgid "Cancelar"
 msgstr "Cancel"
+
+#: .\vuelos\templates\vuelos\mis_reservas.html:47
+msgid "No tenés reservas todavía."
+msgstr "You don’t have any reservations yet."
