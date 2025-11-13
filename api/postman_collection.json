@@ -1,0 +1,98 @@
+{
+  "info": {
+    "name": "Aerolínea API - Colección",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección mínima para probar endpoints de la Parte 2 (auth, reservas, boletos)"
+  },
+  "item": [
+    {
+      "name": "Obtener token",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth-token/",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","auth-token",""]
+        }
+      }
+    },
+    {
+      "name": "Listar vuelos",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Token {{token}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/vuelos/",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","vuelos",""]
+        }
+      }
+    },
+    {
+      "name": "Crear reserva",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Token {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pasajero\": {{pasajero_id}},\n  \"vuelo\": {{vuelo_id}},\n  \"asiento\": {{asiento_id}}\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/reservas/crear/",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","reservas","crear",""]
+        }
+      }
+    },
+    {
+      "name": "Confirmar reserva",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Token {{token}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reservas/{{reserva_id}}/confirmar/",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","reservas","{{reserva_id}}","confirmar",""]
+        }
+      }
+    },
+    {
+      "name": "Cancelar reserva",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Token {{token}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reservas/{{reserva_id}}/cancelar/",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","reservas","{{reserva_id}}","cancelar",""]
+        }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8000" },
+    { "key": "username", "value": "admin" },
+    { "key": "password", "value": "password" },
+    { "key": "token", "value": "" },
+    { "key": "pasajero_id", "value": "1" },
+    { "key": "vuelo_id", "value": "1" },
+    { "key": "asiento_id", "value": "1" },
+    { "key": "reserva_id", "value": "1" }
+  ]
+}
