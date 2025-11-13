@@ -53,6 +53,18 @@ REST_FRAMEWORK = {
     ],
 }
 
+# Swagger / drf-yasg settings: make the Authorize dialog accept the Token header
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Token': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization'
+        }
+    },
+}
+
 ROOT_URLCONF = 'aerolinea.urls'
 
 TEMPLATES = [
